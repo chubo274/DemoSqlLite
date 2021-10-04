@@ -8,12 +8,41 @@
  * @format
  */
 
-import React from 'react';
-import {Text} from 'react-native';
-import {openDatabase} from 'react-native-sqlite-storage';
+import React, {useCallback, useEffect} from 'react';
+import {Button, Text, View} from 'react-native';
+import {createTable, getDBConnection, getItems, saveItems} from './SqlLite/dbService';
+import { ItemModel } from './src/model/ItemModel';
 
 const App = () => {
-  return <Text>Demo SQL Lite</Text>;
+  const getDB = useCallback(async () => {
+    try {
+      const db = await getDBConnection();
+      await createTable(db);
+      const getData = await getItems(db);
+      console.log({getData});
+    } catch (error) {
+      console.log('error', error);
+    }
+  }, []);
+
+  const onAdd = useCallback(async () => {
+    try {
+      const db = await getDBConnection();
+    } catch (error) {
+      console.log('error', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    getDB();
+  }, []);
+
+  return (
+    <View>
+      <Text>Demo SQL Lite</Text>
+      <Button title="add item" onPress={onAdd}/>
+    </View>
+  );
 };
 
 export default App;
